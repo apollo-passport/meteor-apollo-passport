@@ -1,14 +1,15 @@
 import './check-npm.js';
+import 'regenerator-runtime/runtime';
 
 import { createNetworkInterface } from 'apollo-client';
 import { addTypenameToSelectionSet } from 'apollo-client/queries/queryTransform';
-import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
+
+import apMiddleware from 'apollo-passport/lib/client/middleware';
 
 const defaultNetworkInterfaceConfig = {
   path: '/graphql',
-  options: {},
-  useMeteorAccounts: true
+  options: {}
 };
 
 export const createMeteorNetworkInterface = (givenConfig) => {
@@ -24,27 +25,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   const url = Meteor.absoluteUrl(path);
   const networkInterface = createNetworkInterface(url);
 
-  if (config.useMeteorAccounts) {
-    networkInterface.use([{
-      applyMiddleware(request, next) {
-        const currentUserToken = Accounts._storedLoginToken();
-
-        if (!currentUserToken) {
-          next();
-          return;
-        }
-
-        if (!request.options.headers) {
-          request.options.headers = new Headers();
-        }
-
-        request.options.headers.Authorization = currentUserToken;
-
-        next();
-      },
-    }]);
-  }
-
+  networkInterface.use([ apMiddleware ]);
   return networkInterface;
 };
 

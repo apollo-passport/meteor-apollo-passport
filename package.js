@@ -1,15 +1,14 @@
 Package.describe({
-  name: 'apollo',
-  version: '0.1.0-beta_3',
-  summary: ' 🚀 Add Apollo to your Meteor app',
-  git: 'https://github.com/apollostack/meteor-integration'
+  name: 'apollo-passport',
+  version: '0.0.1-pre.0',
+  summary: ' 🚀 Add Apollo Passport to your Meteor app',
+  git: 'https://github.com/apollo-passport/meteor-apollo-passport'
 });
 
 Package.onUse(function(api) {
   api.versionsFrom('1.4.0.1');
   api.use(['ecmascript',
            'underscore',
-           'accounts-base',
            'tmeasday:check-npm-versions@0.3.1']);
 
   api.mainModule('main-client.js', 'client');

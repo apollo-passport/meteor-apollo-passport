@@ -1,16 +1,30 @@
 import './check-npm.js';
 
 import { apolloExpress, graphiqlExpress } from 'apollo-server';
+import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 import bodyParser from 'body-parser';
 import express from 'express';
 
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
-import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
+import { MongoInternals } from 'meteor/mongo';
 
-const defaultConfig = {
+import ApolloPassport from 'apollo-passport';
+import MongoDBDriver from 'apollo-passport-mongodb';
+import { mergeResolvers, mergeSchemas } from 'apollo-passport/lib/utils/graphql-merge';
+
+const defaultApolloPassportConfig = {
+  db: new MongoDBDriver(MongoInternals.defaultRemoteCollectionDriver().mongo.db)
+};
+
+export const createApolloPassport = (givenConfig) => {
+  let config = _.extend({}, defaultApolloPassportConfig, givenConfig);
+  return new ApolloPassport(config);
+};
+
+const defaultApolloConfig = {
   path: '/graphql',
   maxAccountsCacheSizeInMB: 1,
   graphiql : Meteor.isDevelopment,
@@ -20,53 +34,32 @@ const defaultConfig = {
 
 export const createApolloServer = (givenOptions, givenConfig) => {
 
-  let config = _.extend(defaultConfig, givenConfig);
+  const config = _.extend({}, defaultApolloConfig, givenConfig);
+  const ap = config.apolloPassport;
 
   const graphQLServer = express();
 
+  const executableSchema = makeExecutableSchema({
+    typeDefs: mergeSchemas(givenOptions.schema.concat(ap.schema())),
+    resolvers: mergeResolvers(givenOptions.resolvers, ap.resolvers()),
+    connectors: givenOptions.connectors,
+  });
+
+  if (givenOptions.mocks) {
+    addMockFunctionsToSchema({
+      schema: executableSchema,
+      mocks: givenOptions.mocks,
+      preserveResolvers: true,
+    });
+  }
+
+  const options = { schema: executableSchema };
+
   // GraphQL endpoint
-  graphQLServer.use(config.path, bodyParser.json(), apolloExpress(async (req) => {
-    let options,
-        user = null;
-
-    if (_.isFunction(givenOptions))
-      options = givenOptions(req);
-    else
-      options = givenOptions;
-
-    options = Object.assign({}, options);
-
-    // Get the token from the header
-    if (req.headers.authorization) {
-      const token = req.headers.authorization;
-      check(token, String);
-      const hashedToken = Accounts._hashLoginToken(token);
-
-      // Get the user from the database
-      user = await Meteor.users.findOne(
-        {"services.resume.loginTokens.hashedToken": hashedToken},
-        {fields: {
-          _id: 1,
-          'services.resume.loginTokens.$': 1
-        }});
-
-      if (user) {
-        const expiresAt = Accounts._tokenExpiration(user.services.resume.loginTokens[0].when);
-        const isExpired = expiresAt < new Date();
-
-        if (!isExpired) {
-          if (!options.context) {
-            options.context = {};
-          }
-
-          options.context.userId = user._id;
-        }
-      }
-    }
-
-    return options;
-
-  }));
+  graphQLServer.use(config.path,
+    bodyParser.json(),
+    apolloExpress(ap.wrapOptions(options))
+  );
 
   // Start GraphiQL if enabled
   if (config.graphiql) {
@@ -75,4 +68,6 @@ export const createApolloServer = (givenOptions, givenConfig) => {
 
   // This binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
+
+  WebApp.connectHandlers.use('/ap-auth', ap.expressMiddleware());
 };
