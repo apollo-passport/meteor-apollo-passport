@@ -1,30 +1,18 @@
-This atmosphere package allows you to use the [Apollo Stack](http://docs.apollostack.com/) in your [Meteor](https://www.meteor.com/) app.
+# meteor-apollo-passport
 
-For usage, see the [Meteor Integration](http://docs.apollostack.com/apollo-client/meteor.html) section of the Apollo Docs. 
+Apollo Passport version of [apollostack/meteor-integration](https://github.com/apollostack/meteor-integration).  Meteor package to help set up Apollo and Apollo Passport.  For usage example, see https://github.com/apollo-passport/meteor-starter.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Usage
 
-
-- [Package Development](#package-development)
-  - [Tests](#tests)
-  - [Credits](#credits)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Package Development
-
-## Tests
-
-TODO broken, see #3
+### via Atmosphere
 
 ```bash
-git clone git@github.com:apollostack/meteor-integration.git
-cd meteor-integration
-meteor test-packages ./ --driver-package practicalmeteor:mocha
-open localhost:3000
+$ meteor add gadicc:apollo-passport@0.0.1-alpha.0      # Or desired versions
 ```
 
-## Credits
+### From checkout
 
-[Contributors](https://github.com/apollostack/meteor-integration/graphs/contributors)
+```bash
+$ cd ~/myproj/packages
+$ git clone https://github.com/apollo-passport/meteor-apollo-passport
+```

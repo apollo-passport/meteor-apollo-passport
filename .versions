@@ -24,13 +24,14 @@ diff-sequence@1.0.6
 ecmascript@0.5.7
 ecmascript-runtime@0.3.12
 ejson@1.0.12
+gadicc:apollo-passport@0.0.1-alpha.0
 geojson-utils@1.0.9
 html-tools@1.0.10
 htmljs@1.0.10
 http@1.1.8
 id-map@1.0.8
 jquery@1.11.9
-local-test:apollo@0.1.0-beta_2
+local-test:gadicc:apollo-passport@0.0.1-alpha.0
 localstorage@1.0.11
 logging@1.1.14
 meteor@1.2.16
