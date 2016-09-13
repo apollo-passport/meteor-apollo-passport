@@ -7,7 +7,7 @@ Apollo Passport version of [apollostack/meteor-integration](https://github.com/a
 ### via Atmosphere
 
 ```bash
-$ meteor add gadicc:apollo-passport@0.0.1-alpha.0      # Or desired versions
+$ meteor add gadicc:apollo-passport@0.0.1-alpha.1      # Or desired versions
 ```
 
 ### From checkout

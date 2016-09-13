@@ -8,8 +8,8 @@ if (Meteor.isClient) {
 } else {
   checkNpmVersions({
     'apollo-server': '^0.2.1',
-    'apollo-passport': '^0.0.5',
-    'apollo-passport-mongodb': '^0.0.1',
+    'apollo-passport': '>=0.0.7',
+    'apollo-passport-mongodb': '>=0.0.1',
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "graphql": "^0.6.2",

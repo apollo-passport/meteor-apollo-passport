@@ -1,6 +1,6 @@
 Package.describe({
   name: 'gadicc:apollo-passport',
-  version: '0.0.1-alpha.0',
+  version: '0.0.1-alpha.1',
   summary: ' 🚀 Add Apollo Passport to your Meteor app',
   git: 'https://github.com/apollo-passport/meteor-apollo-passport'
 });
